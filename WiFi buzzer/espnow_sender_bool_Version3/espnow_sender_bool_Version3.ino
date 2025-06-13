@@ -4,7 +4,7 @@
 const int button = 0;
 const int vol = 32;
 
-//Since I am using the boot pin, pressed == HIGH and vice verca.
+//Since I am using the boot pin, pressed == HIGH and vice versa.
 bool myState = LOW;
 bool oldState = myState;
 
@@ -41,17 +41,18 @@ void setup() {
   esp_now_add_peer(&peerInfo); // Register the peer with ESP-NOW
 
   
-  esp_now_send(receiverAddress, (uint8_t*)&myState, sizeof(myState)); // Send the boolean state
+  esp_now_send(receiverAddress, (uint8_t*)&dataToSend, sizeof(dataToSend)); // Send the boolean state
 
 }
 
 void loop() {
   dataToSend.myState = !digitalRead(button);
+  dataToSend.myValue = analogRead(vol);
 
   if(dataToSend.myState != oldState) {
     esp_now_send(receiverAddress, (uint8_t*)&dataToSend, sizeof(dataToSend));
     oldState = dataToSend.myState;
-    Serial.println(dataToSend.myState);
+    Serial.println(dataToSend.myState, dataToSend.myValue);
   }
 
   delay(20);
